@@ -1,1 +1,1 @@
-include m2_kernel/assets/m2-*/*
+graft m2_kernel/assets
