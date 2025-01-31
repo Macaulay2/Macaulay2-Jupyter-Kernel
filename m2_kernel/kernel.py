@@ -71,9 +71,9 @@ class M2Interp:
         self.conf = M2Config(execpath, configpath)
         self.proc = None
         self.proc_command = self.conf.args.execpath
+        init_file = f'{os.path.dirname(__file__)}/assets/m2-code/init.m2'
         self.proc_kwargs = {
-            'args': ['--silent', '--no-debug', '-e', 'load("init.m2")'],
-            'cwd': os.path.dirname(__file__) + '/assets/m2-code/',
+            'args': ['--silent', '--no-debug', '-e', f'load("{init_file}")'],
             'timeout': timeout
         }
 
