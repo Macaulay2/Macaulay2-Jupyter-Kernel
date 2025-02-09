@@ -306,7 +306,8 @@ class M2Kernel(Kernel):
                 self.send_response(self.iopub_socket, 'stream', stdout_content)
 
             if data:
-                execute_content = {'data': data, 'execution_count': xcount}
+                execute_content = {'data': data, 'execution_count': xcount,
+                                   'metadata': {}}
                 self.send_response(self.iopub_socket, 'execute_result', execute_content)
 
         return {'status': 'ok',
