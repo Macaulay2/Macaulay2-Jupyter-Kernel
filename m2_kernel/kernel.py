@@ -219,7 +219,6 @@ class M2Kernel(Kernel):
         'mimetype': 'text/x-macaulay2',
         'file_extension': '.m2',
         'codemirror_mode': 'macaulay2',
-        # 'pigments_lexer': None,
     }
     banner = 'Jupyter Kernel for Macaulay2 (v{})'.format(implementation_version)
     help_links = [{
