@@ -1,30 +1,20 @@
 saveStandardPrint = Thing#{Standard,Print}
---saveStandardAfterPrint = Thing#{Standard,AfterPrint}
-saveTeXmacsPrint = Thing#{TeXmacs,Print}
---saveTeXmacsAfterPrint = Thing#{TeXmacs,AfterPrint}
+saveTeXmacsPrint  = Thing#{TeXmacs, Print}
+saveWebAppPrint   = Thing#{WebApp,  Print}
 
 sentinelStandardPrint = x -> ( << "--VAL\n"; saveStandardPrint(x); << "--CLS\n"; )
---sentinelStandardAfterPrint = x -> ( << "--CLS\n"; saveStandardAfterPrint(x); << "--CLR\n"; )
-sentinelTeXmacsPrint = x -> ( << "--VAL\n"; saveTeXmacsPrint(x); << "--CLS\n"; )
---sentinelTeXmacsAfterPrint = x -> ( << "--CLS\n"; saveTeXmacsAfterPrint(x); << "--CLR\n"; )
+sentinelTeXmacsPrint  = x -> ( << "--VAL\n"; saveTeXmacsPrint(x);  << "--CLS\n"; )
+sentinelWebAppPrint   = x -> ( << "--VAL\n"; saveWebAppPrint(x);   << "--CLS\n"; )
 
 Thing#{Standard,Print} = sentinelStandardPrint
---Thing#{Standard,AfterPrint} = sentinelStandardAfterPrint
-texmacsmode = false;
 
---printWidth = 1023
+noop = (trigger) -> (lineNumber -= 1;)
 
-noop = (trigger) -> ( lineNumber=lineNumber-1; null )
-mode = (usetexmacs) -> (
-    if texmacsmode != usetexmacs then (
-        texmacsmode = usetexmacs;
-        if texmacsmode then (
-            Thing#{Standard,Print} = sentinelTeXmacsPrint
-            --Thing#{Standard,AfterPrint} = sentinelTeXmacsAfterPrint
-        ) else (
-            Thing#{Standard,Print} = sentinelStandardPrint
-            --Thing#{Standard,AfterPrint} = sentinelStandardAfterPrint
-        )
+mode = (newmode) -> (
+    Thing#{Standard, Print} = (
+	if      newmode === Standard then sentinelStandardPrint
+	else if newmode === TeXmacs  then sentinelTeXmacsPrint
+	else if newmode === WebApp   then sentinelWebAppPrint
     );
     noop(mode);
 )

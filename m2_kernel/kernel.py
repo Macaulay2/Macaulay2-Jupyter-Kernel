@@ -21,7 +21,7 @@ class M2Config:
 
         parser.add_argument('--timeout', type=int, default=2)
         parser.add_argument('--timeout_startup', type=int, default=5)
-        parser.add_argument('--mode', choices=['default', 'original', 'texmacs', 'pretty'],
+        parser.add_argument('--mode', choices=['default', 'original', 'texmacs', 'pretty', 'webapp'],
                             default='default')
         # parser.add_argument('--debug', default=False,
         #                     type=lambda x: True if x.lower() in ['1','true','on'] else False)
@@ -104,9 +104,11 @@ class M2Interp:
                     else:
                         self.debug = False
                     if val == 'texmacs':
-                        cmd = 'mode(true);'
+                        cmd = 'mode TeXmacs;'
+                    elif val == 'webapp':
+                        cmd = 'mode WebApp;'
                     else:
-                        cmd = 'mode(false);'
+                        cmd = 'mode Standard;'
                 magic_lines.append(cmd + ' << "{}";--CMD'.format(msg))
             elif trimmed.startswith('--'):
                 continue
@@ -267,6 +269,13 @@ class M2Kernel(Kernel):
             textcls = '\n'.join([ln[margin:].decode() for ln in nodes[-1][3]])
             html = '<pre>{}</pre><pre style="color: gray">{}</pre>'.format(textval, textcls)
             return {'text/html': html}, stdout
+        elif mode == 'webapp':
+            value_lines = nodes[-1][2]
+            if value_lines:
+                dirty = '\n'.join([ln.decode() for ln in value_lines])
+                # webapp mode adds several control characters that we remove
+                clean = re.sub(r'[\x00-\x1f]+', '', dirty)
+                return {'text/html': clean}, stdout
         return None, stdout
 
     def send_stream(self, text, stderr=False):
