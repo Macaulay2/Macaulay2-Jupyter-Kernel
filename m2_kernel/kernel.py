@@ -159,7 +159,8 @@ class M2Interp:
         while not EOT:
             try:
                 for testline in self.proc:
-                    line = testline[:-2]
+                    # remove bracketed paste mode control sequences
+                    line = re.sub(rb'\x1b\[\?2004[hl]', b'', testline).rstrip()
                     if self.debug: print(line)
                     break
             except pexpect.TIMEOUT:
