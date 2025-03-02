@@ -260,9 +260,13 @@ class M2Kernel(Kernel):
 
         if mode == 'texmacs':
             value_lines = nodes[-1][2]
-            if value_lines:
-                dirty = '\n'.join([ln.decode() for ln in value_lines])
-                clean = dirty[6:] + '\n</math>'
+            class_lines = nodes[-1][3]
+            dirty = '\n'.join([ln.decode() for ln in value_lines])
+            if value_lines and class_lines:
+                dirty += '<p></p>'
+            dirty += '\n'.join([ln.decode() for ln in class_lines])
+            clean = re.sub(r'\x02html:|\x05', '', dirty)
+            if clean:
                 return {'text/html': clean}, stdout
         elif mode == 'pretty':
             margin = len(str(nodes[-1][0]))+4
@@ -272,10 +276,13 @@ class M2Kernel(Kernel):
             return {'text/html': html}, stdout
         elif mode == 'webapp':
             value_lines = nodes[-1][2]
-            if value_lines:
-                dirty = '\n'.join([ln.decode() for ln in value_lines])
-                # webapp mode adds several control characters that we remove
-                clean = re.sub(r'[\x00-\x1f]+', '', dirty)
+            class_lines = nodes[-1][3]
+            dirty = '\n'.join([ln.decode() for ln in value_lines])
+            if value_lines and class_lines:
+                dirty += '<p></p>'
+            dirty += '\n'.join([ln.decode() for ln in class_lines])
+            clean = re.sub(r'[\x00-\x1f]', '', dirty)
+            if clean:
                 return {'text/html': clean}, stdout
         return None, stdout
 
