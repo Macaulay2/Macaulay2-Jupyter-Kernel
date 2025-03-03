@@ -30,7 +30,6 @@ def install_kernel_assets(user=True, prefix=None):
         shutil.copy('{}/m2-spec/kernel.js'.format(assets_dir), td)
         print('Installing kernel spec ...')
         KernelSpecManager().install_kernel_spec(td, kernel_name='m2', user=user, prefix=prefix)
-    # TODO: install codemirror extension
 
 def _is_root():
     try:
