@@ -1,20 +1,36 @@
-saveStandardPrint = Thing#{Standard,Print}
-saveTeXmacsPrint  = Thing#{TeXmacs, Print}
-saveWebAppPrint   = Thing#{WebApp,  Print}
+jupyterMode = Standard
 
-sentinelStandardPrint = x -> ( << "--VAL\n"; saveStandardPrint(x); << "--CLS\n"; )
-sentinelTeXmacsPrint  = x -> ( << "--VAL\n"; saveTeXmacsPrint(x);  << "--CLS\n"; )
-sentinelWebAppPrint   = x -> ( << "--VAL\n"; saveWebAppPrint(x);   << "--CLS\n"; )
+-- remove old Jupyter methods if they exist
+scan({Thing, Nothing, Boolean, ZZ, InexactNumber, Expression, Net, Describe,
+	Ideal, MonomialIdeal, Matrix, Module, RingMap, Sequence,
+	CoherentSheaf}, cls -> remove(cls, {Jupyter, AfterPrint}))
 
-Thing#{Standard,Print} = sentinelStandardPrint
+importFrom(Core, {"InputPrompt", "InputContinuationPrompt"})
+ZZ#{Jupyter, InputPrompt} = ZZ#{Standard, InputPrompt}
+ZZ#{Jupyter, InputContinuationPrompt} = ZZ#{Standard, InputContinuationPrompt}
+
+Nothing#{Jupyter, Print}        =
+Nothing#{Jupyter, AfterPrint}   =
+Nothing#{Jupyter, AfterNoPrint} =
+   File#{Jupyter, AfterNoPrint} = x -> null
+
+sentinel = (str, f) -> x -> (
+    << "--" << str << endl;
+    f x;)
+
+Thing#{Jupyter, Print} = x -> (
+    sentinel("VAL", lookup({jupyterMode, Print}, class x))) x
+Thing#{Jupyter, AfterPrint} = x -> (
+    sentinel("CLS", lookup({jupyterMode, AfterPrint}, class x))) x
+Thing#{Jupyter, AfterNoPrint} = x -> (
+    sentinel("CLS", lookup({jupyterMode, AfterNoPrint}, class x))) x
+
 
 noop = (trigger) -> (lineNumber -= 1;)
 
 mode = (newmode) -> (
-    Thing#{Standard, Print} = (
-	if      newmode === Standard then sentinelStandardPrint
-	else if newmode === TeXmacs  then sentinelTeXmacsPrint
-	else if newmode === WebApp   then sentinelWebAppPrint
-    );
+    jupyterMode = newmode;
     noop(mode);
 )
+
+topLevelMode = Jupyter

@@ -203,8 +203,10 @@ class M2Interp:
         # trim the empty trailing line coming from next input line
         if not node:
             pass
-        elif node[2]:
+        elif node[3]:
             nodes.append((node[0],node[1],node[2],node[3][:-1]))
+        elif node[2]:
+            nodes.append((node[0],node[1],node[2][:-1],[]))
         else:
             nodes.append((node[0],node[1][:-1],[],[]))
         return debug_lines if self.debug else nodes
