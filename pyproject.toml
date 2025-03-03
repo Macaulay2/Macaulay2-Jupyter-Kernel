@@ -19,7 +19,7 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/rz137/Macaulay2-Jupyter-Kernel"
+Homepage = "https://github.com/Macaulay2/Macaulay2-Jupyter-Kernel"
 
 [tool.setuptools]
 packages = ["m2_kernel"]
