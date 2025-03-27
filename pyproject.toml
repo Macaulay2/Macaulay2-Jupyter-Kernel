@@ -5,7 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "macaulay2-jupyter-kernel"
 version = "0.7.0"
-dependencies = ["ipykernel", "notebook", "pexpect", "jupyterlab-macaulay2"]
+dependencies = [
+	     "ipykernel",
+	     "notebook",
+	     "pexpect",
+	     "jupyterlab-macaulay2",
+	     "jupyterlab_linewrapcellouput"
+	     ]
 description = "Jupyter kernel for Macaulay2"
 readme = {file = "README.md", content-type = "text/markdown"}
 license = {file = "LICENSE"}
