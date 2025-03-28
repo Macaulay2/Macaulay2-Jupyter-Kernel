@@ -283,7 +283,8 @@ class M2Kernel(Kernel):
             if value_lines and class_lines:
                 dirty += '<p></p>'
             dirty += '\n'.join([ln.decode() for ln in class_lines])
-            clean = re.sub(r'[\x00-\x1f]', '', dirty)
+            # remove webapp tags
+            clean = re.sub(r'[\x0e\x11-\x15\x1c-\x1e]', '', dirty)
             if clean:
                 return {'text/html': clean}, stdout
         return None, stdout
