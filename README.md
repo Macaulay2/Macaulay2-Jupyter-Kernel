@@ -40,7 +40,7 @@ $ python3 -m m2_kernel.install
 Alternatively, you can install the latest development version from source by
 
 ```bash
-$ git clone https://github.com/radoslavraynov/macaulay2-jupyter-kernel.git
+$ git clone https://github.com/Macaulay2/macaulay2-jupyter-kernel.git
 $ cd macaulay2-jupyter-kernel
 $ pip3 install .
 $ python3 -m m2_kernel.install
