@@ -5,7 +5,7 @@
 
 > Beta Testing!
 
-You can now use [Jupyter](http://www.jupyter.org) (Notebook or Lab) as a front-end for [Macaulay2](http://faculty.math.illinois.edu/Macaulay2/).
+You can now use [Jupyter](http://www.jupyter.org) (Notebook or Lab) as a front-end for [Macaulay2](https://macaulay2.com).
 
 See the [demo][demo] for sample use and an outline of the kernel-specific features.
 For bugs or requests, open an issue.
