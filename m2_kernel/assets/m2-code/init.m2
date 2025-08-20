@@ -1,30 +1,36 @@
-saveStandardPrint = Thing#{Standard,Print}
---saveStandardAfterPrint = Thing#{Standard,AfterPrint}
-saveTeXmacsPrint = Thing#{TeXmacs,Print}
---saveTeXmacsAfterPrint = Thing#{TeXmacs,AfterPrint}
+jupyterMode = Standard
 
-sentinelStandardPrint = x -> ( << "--VAL\n"; saveStandardPrint(x); << "--CLS\n"; )
---sentinelStandardAfterPrint = x -> ( << "--CLS\n"; saveStandardAfterPrint(x); << "--CLR\n"; )
-sentinelTeXmacsPrint = x -> ( << "--VAL\n"; saveTeXmacsPrint(x); << "--CLS\n"; )
---sentinelTeXmacsAfterPrint = x -> ( << "--CLS\n"; saveTeXmacsAfterPrint(x); << "--CLR\n"; )
+-- remove old Jupyter methods if they exist
+scan({Thing, Nothing, Boolean, ZZ, InexactNumber, Expression, Net, Describe,
+	Ideal, MonomialIdeal, Matrix, Module, RingMap, Sequence,
+	CoherentSheaf}, cls -> remove(cls, {Jupyter, AfterPrint}))
 
-Thing#{Standard,Print} = sentinelStandardPrint
---Thing#{Standard,AfterPrint} = sentinelStandardAfterPrint
-texmacsmode = false;
+importFrom(Core, {"InputPrompt", "InputContinuationPrompt"})
+ZZ#{Jupyter, InputPrompt} = ZZ#{Standard, InputPrompt}
+ZZ#{Jupyter, InputContinuationPrompt} = ZZ#{Standard, InputContinuationPrompt}
 
---printWidth = 1023
+Nothing#{Jupyter, Print}        =
+Nothing#{Jupyter, AfterPrint}   =
+Nothing#{Jupyter, AfterNoPrint} =
+   File#{Jupyter, AfterNoPrint} = x -> null
 
-noop = (trigger) -> ( lineNumber=lineNumber-1; null )
-mode = (usetexmacs) -> (
-    if texmacsmode != usetexmacs then (
-        texmacsmode = usetexmacs;
-        if texmacsmode then (
-            Thing#{Standard,Print} = sentinelTeXmacsPrint
-            --Thing#{Standard,AfterPrint} = sentinelTeXmacsAfterPrint
-        ) else (
-            Thing#{Standard,Print} = sentinelStandardPrint
-            --Thing#{Standard,AfterPrint} = sentinelStandardAfterPrint
-        )
-    );
+sentinel = (str, f) -> x -> (
+    << "--" << str << endl;
+    f x;)
+
+Thing#{Jupyter, Print} = x -> (
+    sentinel("VAL", lookup({jupyterMode, Print}, class x))) x
+Thing#{Jupyter, AfterPrint} = x -> (
+    sentinel("CLS", lookup({jupyterMode, AfterPrint}, class x))) x
+Thing#{Jupyter, AfterNoPrint} = x -> (
+    sentinel("CLS", lookup({jupyterMode, AfterNoPrint}, class x))) x
+
+
+noop = (trigger) -> (lineNumber -= 1;)
+
+mode = (newmode) -> (
+    jupyterMode = newmode;
     noop(mode);
 )
+
+topLevelMode = Jupyter

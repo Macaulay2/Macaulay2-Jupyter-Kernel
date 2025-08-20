@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "macaulay2-jupyter-kernel"
+version = "0.7.0"
+dependencies = [
+	     "ipykernel",
+	     "notebook",
+	     "pexpect",
+	     "jupyterlab-macaulay2",
+	     "jupyterlab_linewrapcellouput"
+	     ]
+description = "Jupyter kernel for Macaulay2"
+readme = {file = "README.md", content-type = "text/markdown"}
+license = {file = "LICENSE"}
+keywords = ["jupyter", "kernel", "macaulay2"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Framework :: Jupyter",
+  "Intended Audience :: Education",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Mathematics",
+]
+
+[project.urls]
+Homepage = "https://github.com/Macaulay2/Macaulay2-Jupyter-Kernel"
+
+[tool.setuptools]
+packages = ["m2_kernel"]

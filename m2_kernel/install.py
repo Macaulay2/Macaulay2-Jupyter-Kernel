@@ -7,7 +7,6 @@ import sys
 from jupyter_client.kernelspec import KernelSpecManager
 from IPython.utils.tempdir import TemporaryDirectory
 from notebook import __path__ as notebook_dir
-from notebook.nbextensions import install_nbextension
 
 """ Macaulay2 Jupyter Kernel: standard jupyter kernel spec installation
 """
@@ -15,8 +14,7 @@ from notebook.nbextensions import install_nbextension
 kernel_json = {
     "argv": [sys.executable, "-m", "m2_kernel", "-f", "{connection_file}"],
     "display_name": "M2",
-    "language": "text/x-macaulay2",
-    "codemirror_mode": "macaulay2",
+    "language": "Macaulay2"
 }
 
 
@@ -32,12 +30,6 @@ def install_kernel_assets(user=True, prefix=None):
         shutil.copy('{}/m2-spec/kernel.js'.format(assets_dir), td)
         print('Installing kernel spec ...')
         KernelSpecManager().install_kernel_spec(td, kernel_name='m2', user=user, prefix=prefix)
-
-    print("Installing nbextension for syntax highlighting ...")
-    install_nbextension('{}/m2-mode'.format(assets_dir),
-            nbextensions_dir='{}/static/components/codemirror/mode/'.format(notebook_dir[0]),
-            destination='macaulay2', overwrite=True, symlink=False)
-
 
 def _is_root():
     try:

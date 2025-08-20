@@ -21,7 +21,7 @@ class M2Config:
 
         parser.add_argument('--timeout', type=int, default=2)
         parser.add_argument('--timeout_startup', type=int, default=5)
-        parser.add_argument('--mode', choices=['default', 'original', 'texmacs', 'pretty'],
+        parser.add_argument('--mode', choices=['default', 'original', 'texmacs', 'pretty', 'webapp'],
                             default='default')
         # parser.add_argument('--debug', default=False,
         #                     type=lambda x: True if x.lower() in ['1','true','on'] else False)
@@ -71,9 +71,9 @@ class M2Interp:
         self.conf = M2Config(execpath, configpath)
         self.proc = None
         self.proc_command = self.conf.args.execpath
+        init_file = f'{os.path.dirname(__file__)}/assets/m2-code/init.m2'
         self.proc_kwargs = {
-            'args': ['--silent', '--no-debug', '-e', 'load("init.m2")'],
-            'cwd': os.path.dirname(__file__) + '/assets/m2-code/',
+            'args': ['--silent', '--no-debug', '-e', f'load("{init_file}")'],
             'timeout': timeout
         }
 
@@ -104,9 +104,11 @@ class M2Interp:
                     else:
                         self.debug = False
                     if val == 'texmacs':
-                        cmd = 'mode(true);'
+                        cmd = 'mode TeXmacs;'
+                    elif val == 'webapp':
+                        cmd = 'mode WebApp;'
                     else:
-                        cmd = 'mode(false);'
+                        cmd = 'mode Standard;'
                 magic_lines.append(cmd + ' << "{}";--CMD'.format(msg))
             elif trimmed.startswith('--'):
                 continue
@@ -157,7 +159,8 @@ class M2Interp:
         while not EOT:
             try:
                 for testline in self.proc:
-                    line = testline[:-2]
+                    # remove bracketed paste mode control sequences
+                    line = re.sub(rb'\x1b\[\?2004[hl]', b'', testline).rstrip()
                     if self.debug: print(line)
                     break
             except pexpect.TIMEOUT:
@@ -200,8 +203,10 @@ class M2Interp:
         # trim the empty trailing line coming from next input line
         if not node:
             pass
-        elif node[2]:
+        elif node[3]:
             nodes.append((node[0],node[1],node[2],node[3][:-1]))
+        elif node[2]:
+            nodes.append((node[0],node[1],node[2][:-1],[]))
         else:
             nodes.append((node[0],node[1][:-1],[],[]))
         return debug_lines if self.debug else nodes
@@ -219,7 +224,6 @@ class M2Kernel(Kernel):
         'mimetype': 'text/x-macaulay2',
         'file_extension': '.m2',
         'codemirror_mode': 'macaulay2',
-        # 'pigments_lexer': None,
     }
     banner = 'Jupyter Kernel for Macaulay2 (v{})'.format(implementation_version)
     help_links = [{
@@ -258,9 +262,13 @@ class M2Kernel(Kernel):
 
         if mode == 'texmacs':
             value_lines = nodes[-1][2]
-            if value_lines:
-                dirty = '\n'.join([ln.decode() for ln in value_lines])
-                clean = dirty[6:] + '\n</math>'
+            class_lines = nodes[-1][3]
+            dirty = '\n'.join([ln.decode() for ln in value_lines])
+            if value_lines and class_lines:
+                dirty += '<p></p>'
+            dirty += '\n'.join([ln.decode() for ln in class_lines])
+            clean = re.sub(r'\x02html:|\x05', '', dirty)
+            if clean:
                 return {'text/html': clean}, stdout
         elif mode == 'pretty':
             margin = len(str(nodes[-1][0]))+4
@@ -268,6 +276,17 @@ class M2Kernel(Kernel):
             textcls = '\n'.join([ln[margin:].decode() for ln in nodes[-1][3]])
             html = '<pre>{}</pre><pre style="color: gray">{}</pre>'.format(textval, textcls)
             return {'text/html': html}, stdout
+        elif mode == 'webapp':
+            value_lines = nodes[-1][2]
+            class_lines = nodes[-1][3]
+            dirty = '\n'.join([ln.decode() for ln in value_lines])
+            if value_lines and class_lines:
+                dirty += '<p></p>'
+            dirty += '\n'.join([ln.decode() for ln in class_lines])
+            # remove webapp tags
+            clean = re.sub(r'[\x0e\x11-\x15\x1c-\x1e]', '', dirty)
+            if clean:
+                return {'text/html': clean}, stdout
         return None, stdout
 
     def send_stream(self, text, stderr=False):
@@ -307,7 +326,8 @@ class M2Kernel(Kernel):
                 self.send_response(self.iopub_socket, 'stream', stdout_content)
 
             if data:
-                execute_content = {'data': data, 'execution_count': xcount}
+                execute_content = {'data': data, 'execution_count': xcount,
+                                   'metadata': {}}
                 self.send_response(self.iopub_socket, 'execute_result', execute_content)
 
         return {'status': 'ok',
