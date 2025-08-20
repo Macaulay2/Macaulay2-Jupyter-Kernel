@@ -1,6 +1,5 @@
 # M2JK — Jupyter kernel for Macaulay2
 
-[![](https://img.shields.io/travis/radoslavraynov/Macaulay2-Jupyter-Kernel.svg?style=flat-square)](https://travis-ci.org/radoslavraynov/Macaulay2-Jupyter-Kernel/)
 [![](https://img.shields.io/pypi/v/macaulay2-jupyter-kernel.svg?style=flat-square)](https://pypi.org/project/macaulay2-jupyter-kernel/)
 [![](https://img.shields.io/github/commits-since/radoslavraynov/macaulay2-jupyter-kernel/latest.svg?style=flat-square)](#)
 
