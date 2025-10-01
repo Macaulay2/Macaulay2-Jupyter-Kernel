@@ -113,7 +113,9 @@ class M2Interp:
             elif trimmed.startswith('--'):
                 continue
             else:
-                code_lines.append(line+'--CMD')
+                code_lines.append(line)
+        if code_lines:
+            code_lines[-1] += "--CMD"
         if magic_lines or code_lines:
             return 'noop(begin)--CMD\n{}\nnoop(end)--CMD--EOB'.format('\n'.join(magic_lines+code_lines))
         return ''
@@ -177,7 +179,7 @@ class M2Interp:
                 debug_lines.append(line)
                 continue
 
-            if line.endswith(b'--CMD'):
+            if not state:
                 newinput = self.patt_input.match(line)
                 if newinput:
                     if node:
@@ -187,7 +189,8 @@ class M2Interp:
                             nodes.append(node)
                     linenumber = int(newinput.groups()[0])
                     node = (linenumber,[],[],[])
-                    state = 'CMD'
+            if line.endswith(b'--CMD'):
+                state = 'CMD'
             elif line.endswith(b'--VAL'):
                 state = 'VAL'
             elif line.endswith(b'--CLS'):
