@@ -28,6 +28,8 @@ def install_kernel_assets(user=True, prefix=None):
         with open(os.path.join(td, 'kernel.json'), 'w') as f:
             json.dump(kernel_json, f, indent=2, sort_keys=False)
         shutil.copy('{}/m2-spec/kernel.js'.format(assets_dir), td)
+        for size in ['32x32', '64x64']:
+            shutil.copy(f"{assets_dir}/logo-{size}.png", td)
         print('Installing kernel spec ...')
         KernelSpecManager().install_kernel_spec(td, kernel_name='m2', user=user, prefix=prefix)
 
