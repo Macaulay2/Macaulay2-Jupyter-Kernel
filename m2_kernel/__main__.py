@@ -1,7 +1,4 @@
-from ipykernel.kernelapp import IPKernelApp
 from .kernel import M2Kernel
 
-""" Macaulay2 Jupyter Kernel point of entry
-"""
-
-IPKernelApp.launch_instance(kernel_class=M2Kernel)
+if __name__ == '__main__':
+    M2Kernel.run_as_main()

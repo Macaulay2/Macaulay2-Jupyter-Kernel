@@ -1,4 +1,4 @@
-jupyterMode = Standard
+jupyterMode = WebApp
 
 -- remove old Jupyter methods if they exist
 scan({Thing, Nothing, Boolean, ZZ, InexactNumber, Expression, Net, Describe,
@@ -7,24 +7,15 @@ scan({Thing, Nothing, Boolean, ZZ, InexactNumber, Expression, Net, Describe,
 
 importFrom(Core, {"InputPrompt", "InputContinuationPrompt"})
 ZZ#{Jupyter, InputPrompt} = ZZ#{Standard, InputPrompt}
-ZZ#{Jupyter, InputContinuationPrompt} = ZZ#{Standard, InputContinuationPrompt}
+-- should match continuation_prompt_regex passed to REPLWrapper
+ZZ#{Jupyter, InputContinuationPrompt} = x -> "... : "
 
-Nothing#{Jupyter, Print}        =
-Nothing#{Jupyter, AfterPrint}   =
-Nothing#{Jupyter, AfterNoPrint} =
-   File#{Jupyter, AfterNoPrint} = x -> null
-
-sentinel = (str, f) -> x -> (
-    << "--" << str << endl;
-    f x;)
-
-Thing#{Jupyter, Print} = x -> (
-    sentinel("VAL", lookup({jupyterMode, Print}, class x))) x
-Thing#{Jupyter, AfterPrint} = x -> (
-    sentinel("CLS", lookup({jupyterMode, AfterPrint}, class x))) x
-Thing#{Jupyter, AfterNoPrint} = x -> (
-    sentinel("CLS", lookup({jupyterMode, AfterNoPrint}, class x))) x
-
+getMethod = symb -> x -> (
+    (lookup({jupyterMode, symb}, class x)) x;
+    if isMember(jupyterMode, {WebApp, TeXmacs}) then << "<p></p>" << endl)
+Thing#{Jupyter, Print}        = getMethod Print
+Thing#{Jupyter, AfterPrint}   = getMethod AfterPrint
+Thing#{Jupyter, AfterNoPrint} = getMethod AfterNoPrint
 
 noop = (trigger) -> (lineNumber -= 1;)
 
