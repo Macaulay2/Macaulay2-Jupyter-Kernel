@@ -10,7 +10,8 @@ class ModeMagic(metakernel.Magic):
     def line_mode(self, mode):
         if mode in self.modes:
             self.kernel.mode = mode
-            self.kernel.do_execute(f"changeJupyterMode {self.modes[mode]}")
+            self.kernel.do_execute_direct(
+                f"changeJupyterMode {self.modes[mode]}")
         else:
             raise ValueError(f"expected one of {list(self.modes.keys())}")
 
