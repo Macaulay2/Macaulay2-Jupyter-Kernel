@@ -20,9 +20,12 @@ ZZ#{Jupyter, InputPrompt} = ZZ#{Standard, InputPrompt}
 ZZ#{Jupyter, InputContinuationPrompt} = x -> "... : "
 
 getMethod = symb -> x -> (lookup({jupyterMode, symb}, class x)) x
+Thing#{Jupyter, BeforePrint}  = getMethod BeforePrint
+Thing#{Jupyter, NoPrint}      = getMethod NoPrint
 Thing#{Jupyter, Print}        = getMethod Print
 Thing#{Jupyter, AfterPrint}   = getMethod AfterPrint
 Thing#{Jupyter, AfterNoPrint} = getMethod AfterNoPrint
+Thing#{Jupyter, print}        = getMethod print
 
 changeJupyterMode = mode -> (
     jupyterMode = mode;
