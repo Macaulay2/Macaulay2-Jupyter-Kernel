@@ -1,3 +1,12 @@
+newPackage "JupyterKernel"
+
+export {"changeJupyterMode"}
+
+importFrom(Core, "Hypertext")
+importFrom(Varieties, "CoherentSheaf")
+
+protect Jupyter
+
 jupyterMode = WebApp
 
 -- remove old Jupyter methods if they exist
@@ -17,17 +26,13 @@ Thing#{Jupyter, Print}        = getMethod Print
 Thing#{Jupyter, AfterPrint}   = getMethod AfterPrint
 Thing#{Jupyter, AfterNoPrint} = getMethod AfterNoPrint
 
-noop = (trigger) -> (lineNumber -= 1;)
-
-mode = (newmode) -> (
-    jupyterMode = newmode;
-    noop(mode);
-)
+changeJupyterMode = mode -> (
+    jupyterMode = mode;
+    lineNumber -= 1;)
 
 topLevelMode = Jupyter
 
 -- override some hypertext methods for syntax highlighting w/ highlight.js
-importFrom(Core, "Hypertext")
 replaceClass = method()
 replaceClass(String, Thing) := (cls, x) -> x
 replaceClass(String, Option) := (cls, o) -> o#0 => cls
