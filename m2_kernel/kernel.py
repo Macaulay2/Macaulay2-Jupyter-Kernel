@@ -45,7 +45,7 @@ class M2Kernel(ProcessMetaKernel):
             self.wrapper = self.makeWrapper()
 
         output = self.wrapper.run_command(code.rstrip())
-        if self.mode == "default":
+        if self.mode == "standard":
             return TextOutput(output)
         elif self.mode == "webapp":
             return HTML(re.sub(r"[\x0e\x11-\x15\x1c-\x1e]", "", output))
