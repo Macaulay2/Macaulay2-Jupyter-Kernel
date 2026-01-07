@@ -4,6 +4,7 @@ import sys
 from metakernel.process_metakernel import ProcessMetaKernel, TextOutput
 from metakernel.replwrap import REPLWrapper
 from IPython.display import HTML
+from .symbols import completion_symbols
 
 class M2Kernel(ProcessMetaKernel):
     implementation = "macaulay2_jupyter_kernel"
@@ -55,6 +56,10 @@ class M2Kernel(ProcessMetaKernel):
                 output.replace("\x02html:", "<p>").replace("\x05", "</p>"))
         else:
             return ""
+
+    def get_completions(self, info):
+        return [s for s in completion_symbols if s.startswith(info["obj"])]
+
 
 # TODO:
 # * add support for mode, timeout magics (+ any others we currently support?)
