@@ -25,3 +25,29 @@ mode = (newmode) -> (
 )
 
 topLevelMode = Jupyter
+
+-- override some hypertext methods for syntax highlighting w/ highlight.js
+importFrom(Core, "Hypertext")
+replaceClass = method()
+replaceClass(String, Thing) := (cls, x) -> x
+replaceClass(String, Option) := (cls, o) -> o#0 => cls
+replaceClass(String, Hypertext) := (cls, x) -> apply(x, replaceClass_cls)
+
+replaceHypertext = (T, cls) -> (
+    oldhypertext := lookup(hypertext, T);
+    hypertext T := replaceClass_cls @@ oldhypertext)
+
+replaceHypertext(Dictionary, "hljs-type")
+replaceHypertext(Type, "hljs-type")
+replaceHypertext(Boolean, "hljs-literal")
+replaceHypertext(Command, "hljs-literal")
+replaceHypertext(File, "hljs-literal")
+replaceHypertext(Function, "hljs-literal")
+replaceHypertext(FunctionBody, "hljs-literal")
+replaceHypertext(IndeterminateNumber, "hljs-literal")
+replaceHypertext(Manipulator, "hljs-literal")
+replaceHypertext(Nothing, "hljs-literal")
+replaceHypertext(Package, "hljs-literal")
+replaceHypertext(Net, "hljs-string")
+replaceHypertext(String, "hljs-string")
+replaceHypertext(Time, "hljs-comment")
