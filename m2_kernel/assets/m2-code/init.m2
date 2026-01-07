@@ -2,19 +2,16 @@ newPackage "JupyterKernel"
 
 export {"changeJupyterMode"}
 
-importFrom(Core, "Hypertext")
+importFrom(Core, {
+	"InputPrompt",
+	"InputContinuationPrompt",
+	"Hypertext"})
 importFrom(Varieties, "CoherentSheaf")
 
 protect Jupyter
 
 jupyterMode = WebApp
 
--- remove old Jupyter methods if they exist
-scan({Thing, Nothing, Boolean, ZZ, InexactNumber, Expression, Net, Describe,
-	Ideal, MonomialIdeal, Matrix, Module, RingMap, Sequence,
-	CoherentSheaf}, cls -> remove(cls, {Jupyter, AfterPrint}))
-
-importFrom(Core, {"InputPrompt", "InputContinuationPrompt"})
 ZZ#{Jupyter, InputPrompt} = ZZ#{Standard, InputPrompt}
 -- should match continuation_prompt_regex passed to REPLWrapper
 ZZ#{Jupyter, InputContinuationPrompt} = x -> "... : "
