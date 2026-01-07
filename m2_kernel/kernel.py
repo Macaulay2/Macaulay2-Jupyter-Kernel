@@ -48,9 +48,11 @@ class M2Kernel(ProcessMetaKernel):
         if self.mode == "standard":
             return TextOutput(output)
         elif self.mode == "webapp":
-            return HTML(re.sub(r"[\x0e\x11-\x15\x1c-\x1e]", "", output))
+            return HTML(re.sub(r"[\x0e\x11-\x15\x1c-\x1e]", "",
+                               output.replace("\n", "<br>")))
         elif self.mode == "texmacs":
-            return HTML(re.sub(r"\x02html:|\x05", "", output))
+            return HTML(
+                output.replace("\x02html:", "<p>").replace("\x05", "</p>"))
         else:
             return ""
 

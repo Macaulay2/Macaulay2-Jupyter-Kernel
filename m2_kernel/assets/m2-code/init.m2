@@ -19,9 +19,7 @@ ZZ#{Jupyter, InputPrompt} = ZZ#{Standard, InputPrompt}
 -- should match continuation_prompt_regex passed to REPLWrapper
 ZZ#{Jupyter, InputContinuationPrompt} = x -> "... : "
 
-getMethod = symb -> x -> (
-    (lookup({jupyterMode, symb}, class x)) x;
-    if isMember(jupyterMode, {WebApp, TeXmacs}) then << "<p></p>" << endl)
+getMethod = symb -> x -> (lookup({jupyterMode, symb}, class x)) x
 Thing#{Jupyter, Print}        = getMethod Print
 Thing#{Jupyter, AfterPrint}   = getMethod AfterPrint
 Thing#{Jupyter, AfterNoPrint} = getMethod AfterNoPrint
