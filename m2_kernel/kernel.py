@@ -34,7 +34,7 @@ class M2Kernel(ProcessMetaKernel):
         self.mode = "webapp"
 
     def makeWrapper(self):
-        init_file = f"{os.path.dirname(__file__)}/assets/m2-code/init.m2"
+        init_file = f"{os.path.dirname(__file__)}/assets/m2-code/JupyterKernel.m2"
         return REPLWrapper(
             f"M2 --no-readline -e 'load \"{init_file}\"'",
             r"i+\d+ :\s*$",
