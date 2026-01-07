@@ -1,0 +1,7 @@
+# @M2BANNER@
+
+# run "M2 --script generate-symbols.m2" in top directory to update
+
+completion_symbols = [
+    @M2SYMBOLS@
+    ]
