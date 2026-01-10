@@ -16,7 +16,7 @@ ZZ#{Jupyter, InputPrompt} = ZZ#{Standard, InputPrompt}
 -- should match continuation_prompt_regex passed to REPLWrapper
 ZZ#{Jupyter, InputContinuationPrompt} = x -> "... : "
 
-getMethod = symb -> x -> (lookup({jupyterMode, symb}, class x)) x
+getMethod = symb -> x -> (lookup({jupyterMode, symb}, class x) ?? identity) x
 Thing#{Jupyter, BeforePrint}  = getMethod BeforePrint
 Thing#{Jupyter, NoPrint}      = getMethod NoPrint
 Thing#{Jupyter, Print}        = getMethod Print
