@@ -41,6 +41,14 @@ class M2Kernel(ProcessMetaKernel):
             None,
             continuation_prompt_regex=r"\.\.\. : $")
 
+    # regexes to recognize control tags in webapp mode
+    webapp_with_prompt = re.compile(
+        r"\x0e([^\x12]*)\x12([^\x11]*)\x11([^\x12]*)\x12",
+        re.DOTALL)
+    webapp_without_prompt = re.compile(
+        r"\x11([^\x12]*)\x12",
+        re.DOTALL)
+
     def do_execute_direct(self, code, silent=False):
         if not self.wrapper:
             self.wrapper = self.makeWrapper()
@@ -49,8 +57,11 @@ class M2Kernel(ProcessMetaKernel):
         if self.mode == "standard":
             return TextOutput(output)
         elif self.mode == "webapp":
-            return HTML(re.sub(r"[\x0e\x11-\x15\x1c-\x1e]", "",
-                               output.replace("\n", "<br>")))
+            output = self.webapp_with_prompt.sub(
+                lambda m: f"<p>{m[1]}{m[2]}{m[3]}</p>", output)
+            output = self.webapp_without_prompt.sub(
+                lambda m: f"<p>{m[1]}</p>", output)
+            return HTML(output)
         elif self.mode == "texmacs":
             return HTML(
                 output.replace("\x02html:", "<p>").replace("\x05", "</p>"))
