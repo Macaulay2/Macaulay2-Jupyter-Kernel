@@ -68,8 +68,3 @@ class M2Kernel(ProcessMetaKernel):
 
     def get_completions(self, info):
         return [s for s in completion_symbols if s.startswith(info["obj"])]
-
-
-# TODO:
-# * add support for mode, timeout magics (+ any others we currently support?)
-# * did we break anything by overriding do_execute_direct?  (almost certainly!)
