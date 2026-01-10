@@ -50,23 +50,21 @@ class M2Kernel(ProcessMetaKernel):
         re.DOTALL)
 
     def do_execute_direct(self, code, silent=False):
-        if not self.wrapper:
-            self.wrapper = self.makeWrapper()
+        # run parent do_execute_direct silently so we can modify the output
+        output = super().do_execute_direct(code, True)
 
-        output = self.wrapper.run_command(code.rstrip())
-        if self.mode == "standard":
-            return TextOutput(output)
-        elif self.mode == "webapp":
-            output = self.webapp_with_prompt.sub(
-                lambda m: f"<p>{m[1]}{m[2]}{m[3]}</p>", output)
-            output = self.webapp_without_prompt.sub(
-                lambda m: f"<p>{m[1]}</p>", output)
-            return HTML(output)
-        elif self.mode == "texmacs":
+        if self.mode == "webapp":
             return HTML(
-                output.replace("\x02html:", "<p>").replace("\x05", "</p>"))
+                self.webapp_without_prompt.sub(
+                    lambda m: f"<p>{m[1]}</p>",
+                    self.webapp_with_prompt.sub(
+                        lambda m: f"<p>{m[1]}{m[2]}{m[3]}</p>",
+                        repr(output))))
+        elif self.mode == "texmacs":
+            return HTML(repr(output).replace("\x02html:", "<p>").
+                        replace("\x05", "</p>"))
         else:
-            return ""
+            return output
 
     def get_completions(self, info):
         return [s for s in completion_symbols if s.startswith(info["obj"])]
