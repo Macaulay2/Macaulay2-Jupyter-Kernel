@@ -41,28 +41,57 @@ class M2Kernel(ProcessMetaKernel):
             None,
             continuation_prompt_regex=r"\.\.\. : $")
 
-    # regexes to recognize control tags in webapp mode
-    webapp_with_prompt = re.compile(
-        r"\x0e([^\x12]*)\x12([^\x11]*)\x11([^\x12]*)\x12",
-        re.DOTALL)
-    webapp_without_prompt = re.compile(
-        r"\x11([^\x12]*)\x12",
-        re.DOTALL)
+    webapp_regex = re.compile(
+        r"""
+        \x0e([^\x12]*)\x12([^\x11]*)\x11([^\x12]*)\x12 # with prompt
+        | \x11([^\x12]*)\x12                           # without prompt
+        """,
+        re.DOTALL | re.VERBOSE
+    )
+    texmacs_regex = re.compile(r"\x02html:([^\x05]*)\x05", re.DOTALL)
 
     def do_execute_direct(self, code, silent=False):
         # run parent do_execute_direct silently so we can modify the output
         output = super().do_execute_direct(code, True)
 
         if self.mode == "webapp":
-            return HTML(
-                self.webapp_without_prompt.sub(
-                    lambda m: f"<p>{m[1]}</p>",
-                    self.webapp_with_prompt.sub(
-                        lambda m: f"<p>{m[1]}{m[2]}{m[3]}</p>",
-                        repr(output))))
+            output = repr(output)
+            html = []
+            pos = 0
+
+            for m in self.webapp_regex.finditer(output):
+                pre = output[pos:m.start()].strip()
+                if pre:
+                    html.append(f"<pre>{pre}</pre>\n")
+                p = re.sub(r"[\x0e\x11\x12]", "",  m.group(0))
+                html.append(f"<p>{p}</p>\n")
+                pos = m.end()
+
+            pre = output[pos:].strip()
+            if pre:
+                html.append(f"<pre>{pre}</pre>\n")
+
+            return HTML("".join(html))
+
         elif self.mode == "texmacs":
-            return HTML(repr(output).replace("\x02html:", "<p>").
-                        replace("\x05", "</p>"))
+            output = repr(output)
+            html = []
+            pos = 0
+
+            for m in self.texmacs_regex.finditer(output):
+                pre = output[pos:m.start()].strip()
+                if pre:
+                    html.append(f"<pre>{pre}</pre>\n")
+                p = re.sub(r"\x02html:|\x05", "", m.group(0))
+                html.append(f"<p>{p}</p>\n")
+                pos = m.end()
+
+            pre = output[pos:].strip()
+            if pre:
+                html.append(f"<pre>{pre}</pre>\n")
+
+            return HTML("".join(html))
+
         else:
             return output
 
