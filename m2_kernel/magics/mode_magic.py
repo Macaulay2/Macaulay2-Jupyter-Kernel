@@ -12,14 +12,10 @@ class ModeMagic(metakernel.Magic):
         %mode MODE - switch top level mode
 
         Possible modes:
-           webapp (html + mathjax - default)
+           webapp (html + mathjax) (default)
            texmacs (html + mathml)
            standard (plain text)
         """
-
-        # backwards compatibility
-        if mode in ["default", "original", "pretty"]:
-            mode = "standard"
 
         mode = mode.lower()
         if mode in self.modes:
