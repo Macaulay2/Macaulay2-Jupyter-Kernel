@@ -6,7 +6,9 @@ importFrom(Core, {
 	"htmlFilename",
 	"InputPrompt",
 	"InputContinuationPrompt",
-	"Hypertext"})
+	"Hypertext",
+	"toURL"
+	})
 importFrom(Varieties, "CoherentSheaf")
 
 protect Jupyter
@@ -61,3 +63,8 @@ oldHtmlFilename = lookup(htmlFilename, DocumentTag)
 htmlFilename DocumentTag := t -> (
     "https://www.macaulay2.com/doc/Macaulay2/",
     last oldHtmlFilename t)
+
+oldToURL = lookup(toURL, String)
+toURL String := url -> replace(
+    "^(?:common/)?share/",
+    "https://www.macaulay2.com/doc/Macaulay2/share/", oldToURL url)
