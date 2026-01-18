@@ -1,10 +1,16 @@
 import os
 import re
 import sys
+import html2text
 from metakernel.process_metakernel import ProcessMetaKernel, TextOutput
 from metakernel.replwrap import REPLWrapper
 from IPython.display import HTML
 from .symbols import completion_symbols
+
+class HTMLWithTextFallback(HTML):
+    "Provide text fallback for html output outside of web browsers."
+    def __repr__(self):
+        return html2text.html2text(self._repr_html_())
 
 class M2Kernel(ProcessMetaKernel):
     implementation = "macaulay2_jupyter_kernel"
@@ -71,7 +77,7 @@ class M2Kernel(ProcessMetaKernel):
             if pre:
                 html.append(f"<pre>{pre}</pre>\n")
 
-            return HTML("".join(html))
+            return HTMLWithTextFallback("".join(html))
 
         elif self.mode == "texmacs":
             output = repr(output)
@@ -90,7 +96,7 @@ class M2Kernel(ProcessMetaKernel):
             if pre:
                 html.append(f"<pre>{pre}</pre>\n")
 
-            return HTML("".join(html))
+            return HTMLWithTextFallback("".join(html))
 
         else:
             return output

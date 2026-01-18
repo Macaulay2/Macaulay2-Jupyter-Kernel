@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "macaulay2-jupyter-kernel"
 version = "0.7.0"
 dependencies = [
+	     "html2text",
 	     "metakernel",
 	     "jupyterlab-macaulay2",
 	     "jupyterlab_linewrapcellouput"
