@@ -3,6 +3,7 @@ newPackage "JupyterKernel"
 export {"changeJupyterMode"}
 
 importFrom(Core, {
+	"htmlFilename",
 	"InputPrompt",
 	"InputContinuationPrompt",
 	"Hypertext"})
@@ -54,3 +55,9 @@ replaceHypertext(Package, "hljs-literal")
 replaceHypertext(Net, "hljs-string")
 replaceHypertext(String, "hljs-string")
 replaceHypertext(Time, "hljs-comment")
+
+-- make links in help point to webpage
+oldHtmlFilename = lookup(htmlFilename, DocumentTag)
+htmlFilename DocumentTag := t -> (
+    "https://www.macaulay2.com/doc/Macaulay2/",
+    last oldHtmlFilename t)
