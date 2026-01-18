@@ -71,3 +71,5 @@ oldToURL = lookup(toURL, String)
 toURL String := url -> replace(
     "^(?:common/)?share/",
     "https://www.macaulay2.com/doc/Macaulay2/share/", oldToURL url)
+toURL FilePosition := p -> replace(
+    regexQuote prefixDirectory, "https://www.macaulay2.com/doc/Macaulay2/", p#0)
