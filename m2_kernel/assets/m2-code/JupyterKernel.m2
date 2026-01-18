@@ -13,6 +13,9 @@ importFrom(Varieties, "CoherentSheaf")
 
 protect Jupyter
 
+-- in case we try to reload this package:
+path = append(path, currentFileDirectory)
+
 jupyterMode = WebApp
 
 ZZ#{Jupyter, InputPrompt} = ZZ#{Standard, InputPrompt}
