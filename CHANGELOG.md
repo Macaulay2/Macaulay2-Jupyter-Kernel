@@ -1,3 +1,11 @@
+## [0.7.0]
+- Now maintained by the Macaulay2 organization.
+- Update to work with Notebook 7.
+- Add "webapp" mode.
+- Syntax highlighting in code cells in Notebook & JupyterLab has been moved to
+  [codemirror-lang-macaulay2](https://github.com/d-torrance/codemirror-lang-macaulay2)
+  and [jupyterlab-macaulay2](https://github.com/d-torrance/jupyterlab-macaulay2).
+
 ## [0.6.7]
 - Bug fixes
 
