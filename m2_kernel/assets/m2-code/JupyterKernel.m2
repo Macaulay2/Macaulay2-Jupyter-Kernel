@@ -6,9 +6,10 @@ importFrom(Core, {
 	"htmlFilename",
 	"InputPrompt",
 	"InputContinuationPrompt",
-	"Hypertext",
 	"toURL"
 	})
+
+beginDocumentation()
 
 protect Jupyter
 
@@ -72,3 +73,33 @@ toURL String := url -> replace(
     "https://www.macaulay2.com/doc/Macaulay2/share/", oldToURL url)
 toURL FilePosition := p -> replace(
     regexQuote prefixDirectory, "https://www.macaulay2.com/doc/Macaulay2/", p#0)
+
+-- redefine show to display things in Jupyter
+
+show Hypertext := show TEX := print
+
+mimetypecmd = (
+    if run "command -v xdg-mime > /dev/null" == 0
+    then "!xdg-mime query filetype "
+    else if run "command -v mimetype > /dev/null" == 0
+    then "!mimetype -b "
+    else if run "command -v file > /dev/null" == 0
+    then "!file --mime -b "
+    else "false ")
+
+windowOpen = url -> print LITERAL("<script>window.open(\"" | url |"\")</script>")
+
+show URL := url -> (
+    url = url#0;
+    if match("^http", first url) then windowOpen url
+    else (
+	file := (
+	    if (m := regex("^file://(.*)", url)) =!= null
+	    then substring(m#1, url)
+	    else url);
+	if not fileExists file then error(file, " does not exist");
+	makeDirectory "show_files";
+	copyFile(file, file = "show_files/" | baseFilename file);
+	mimetype := first lines get(mimetypecmd | file);
+	if match("^image", mimetype) then print IMG("src" => file)
+	else windowOpen("/files/" | file)))
