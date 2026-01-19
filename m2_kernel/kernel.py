@@ -3,6 +3,7 @@ import re
 import sys
 import configparser
 import html2text
+import subprocess
 from metakernel.process_metakernel import ProcessMetaKernel, TextOutput
 from metakernel.replwrap import REPLWrapper
 from IPython.display import HTML
@@ -19,11 +20,15 @@ class M2Kernel(ProcessMetaKernel):
     implementation = "macaulay2_jupyter_kernel"
     implementation_version = __version__
     banner = f"Jupyter Kernel for Macaulay2 (v{implementation_version})"
-    language_info = {
-        "name": "Macaulay2",
-        "mimetype": "text/x-macaulay2",
-        "file_extension": ".m2",
-    }
+
+    @property
+    def language_info(self):
+        return {
+            "name": "Macaulay2",
+            "mimetype": "text/x-macaulay2",
+            "file_extension": ".m2",
+            "version": self.version
+        }
 
     kernel_json = {
         "argv": [
@@ -57,6 +62,9 @@ class M2Kernel(ProcessMetaKernel):
                         self.init_cmd += f"; changeJupyterMode {ModeMagic.modes[mode]}"
                     else:
                         raise ValueError(f"expected one of {list(ModeMagic.modes.keys())}")
+
+        self.version = subprocess.check_output(
+            [self.execpath, "--version"], text=True).strip()
         self.register_magics(ModeMagic)
 
     def makeWrapper(self):
