@@ -6,6 +6,7 @@ from metakernel.process_metakernel import ProcessMetaKernel, TextOutput
 from metakernel.replwrap import REPLWrapper
 from IPython.display import HTML
 from .symbols import completion_symbols
+from .mode_magic import ModeMagic
 
 class HTMLWithTextFallback(HTML):
     "Provide text fallback for html output outside of web browsers."
@@ -38,6 +39,7 @@ class M2Kernel(ProcessMetaKernel):
     def __init__(self, *args, **kwargs):
         ProcessMetaKernel.__init__(self, *args, **kwargs)
         self.mode = "webapp"
+        self.register_magics(ModeMagic)
 
     def makeWrapper(self):
         init_file = f"{os.path.dirname(__file__)}/assets/m2-code/JupyterKernel.m2"
