@@ -45,7 +45,7 @@ You can install the latest development version from source by
 
 ```bash
 $ pip3 install git+https://github.com/Macaulay2/Macaulay2-Jupyter-Kernel
-$ python3 -m m2_kernel.install
+$ python3 -m m2_kernel install
 ```
 
 ## Docker
