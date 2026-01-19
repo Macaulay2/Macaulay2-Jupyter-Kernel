@@ -1,0 +1,23 @@
+name: Test
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          cache: pip
+      - name: Install Macaulay2
+        run: sudo apt-get install -y macaulay2 --no-install-recommends
+      - name: Build kernel
+        run: pip install .
+      - name: Install kernel
+        run: python3 -m m2_kernel install --user
+      - name: Test kernel
+        run: |
+          pip install .[test]
+          python3 -m unittest
