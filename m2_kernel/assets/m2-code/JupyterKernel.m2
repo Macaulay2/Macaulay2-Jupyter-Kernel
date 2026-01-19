@@ -9,7 +9,6 @@ importFrom(Core, {
 	"Hypertext",
 	"toURL"
 	})
-importFrom(Varieties, "CoherentSheaf")
 
 protect Jupyter
 
