@@ -19,7 +19,12 @@ class HTMLWithTextFallback(HTML):
 class M2Kernel(ProcessMetaKernel):
     implementation = "macaulay2_jupyter_kernel"
     implementation_version = __version__
-    banner = f"Jupyter Kernel for Macaulay2 (v{implementation_version})"
+
+    @property
+    def banner(self):
+        return (
+            f"Jupyter Kernel for Macaulay2 (v{__version__})\n" +
+            f"Running Macaulay2 v{self.version}")
 
     @property
     def language_info(self):
