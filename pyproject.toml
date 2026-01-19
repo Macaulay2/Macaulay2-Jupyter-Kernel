@@ -27,5 +27,8 @@ classifiers = [
 [project.urls]
 Homepage = "https://github.com/Macaulay2/Macaulay2-Jupyter-Kernel"
 
+[project.optional-dependencies]
+test = ["jupyter-kernel-test"]
+
 [tool.setuptools]
 packages = ["m2_kernel"]
