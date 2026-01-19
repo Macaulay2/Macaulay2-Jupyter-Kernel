@@ -1,7 +1,7 @@
 # M2JK — Jupyter kernel for Macaulay2
 
 [![](https://img.shields.io/pypi/v/macaulay2-jupyter-kernel.svg?style=flat-square)](https://pypi.org/project/macaulay2-jupyter-kernel/)
-[![](https://img.shields.io/github/commits-since/radoslavraynov/macaulay2-jupyter-kernel/latest.svg?style=flat-square)](#)
+[![](https://img.shields.io/github/commits-since/Macaulay2/Macaulay2-Jupyter-Kernel/latest.svg?style=flat-square)](#)
 
 > Beta Testing!
 
@@ -30,6 +30,8 @@ Alternatively, you can configure M2JK to use a specific binary.
 
 ## Installation
 
+<!--
+
 You can install the latest release version directly from PyPI by
 
 ```bash
@@ -37,13 +39,13 @@ $ pip3 install macaulay2-jupyter-kernel
 $ python3 -m m2_kernel.install
 ```
 
-Alternatively, you can install the latest development version from source by
+-->
+
+You can install the latest development version from source by
 
 ```bash
-$ git clone https://github.com/Macaulay2/macaulay2-jupyter-kernel.git
-$ cd macaulay2-jupyter-kernel
-$ pip3 install .
-$ python3 -m m2_kernel.install
+$ pip3 install git+https://github.com/Macaulay2/Macaulay2-Jupyter-Kernel
+$ python3 -m m2_kernel install
 ```
 
 ## Docker
