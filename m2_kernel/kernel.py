@@ -37,8 +37,6 @@ class M2Kernel(ProcessMetaKernel):
             "-f", "{connection_file}"],
         "display_name": "Macaulay2",
         "name": "M2",
-        "mimetype": "text/x-macaulay2",
-        "file_extension": ".m2",
     }
 
     def __init__(self, *args, **kwargs):
