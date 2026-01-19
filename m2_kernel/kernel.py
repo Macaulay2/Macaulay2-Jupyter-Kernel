@@ -8,6 +8,7 @@ from metakernel.replwrap import REPLWrapper
 from IPython.display import HTML
 from .symbols import completion_symbols
 from .mode_magic import ModeMagic
+from ._version import __version__
 
 class HTMLWithTextFallback(HTML):
     "Provide text fallback for html output outside of web browsers."
@@ -16,7 +17,7 @@ class HTMLWithTextFallback(HTML):
 
 class M2Kernel(ProcessMetaKernel):
     implementation = "macaulay2_jupyter_kernel"
-    implementation_version = "0.8.0" # TODO: __version__
+    implementation_version = __version__
     banner = f"Jupyter Kernel for Macaulay2 (v{implementation_version})"
     language_info = {
         "name": "Macaulay2",
