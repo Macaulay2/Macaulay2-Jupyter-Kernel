@@ -24,6 +24,3 @@ class ModeMagic(metakernel.Magic):
                 f"changeJupyterMode {self.modes[mode]}")
         else:
             raise ValueError(f"expected one of {list(self.modes.keys())}")
-
-def register_magics(kernel):
-    kernel.register_magics(ModeMagic)
