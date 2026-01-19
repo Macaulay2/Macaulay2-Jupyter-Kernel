@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import configparser
 import html2text
 from metakernel.process_metakernel import ProcessMetaKernel, TextOutput
 from metakernel.replwrap import REPLWrapper
@@ -36,13 +37,30 @@ class M2Kernel(ProcessMetaKernel):
 
     def __init__(self, *args, **kwargs):
         ProcessMetaKernel.__init__(self, *args, **kwargs)
+        self.execpath = "M2"
         self.mode = "webapp"
+        init_file = f"{os.path.dirname(__file__)}/assets/m2-code/JupyterKernel.m2"
+        self.init_cmd = f'load \"{init_file}\"'
+
+        config = configparser.ConfigParser()
+        configpath = os.getenv("M2JK_CONFIG")
+        if configpath:
+            config.read(configpath)
+            if "magic" in config:
+                if "execpath" in config["magic"]:
+                    self.execpath = config["magic"]["execpath"]
+                if "mode" in config["magic"]:
+                    mode = config["magic"]["mode"]
+                    if mode in ModeMagic.modes:
+                        self.mode = mode
+                        self.init_cmd += f"; changeJupyterMode {ModeMagic.modes[mode]}"
+                    else:
+                        raise ValueError(f"expected one of {list(ModeMagic.modes.keys())}")
         self.register_magics(ModeMagic)
 
     def makeWrapper(self):
-        init_file = f"{os.path.dirname(__file__)}/assets/m2-code/JupyterKernel.m2"
         return REPLWrapper(
-            f"M2 --no-readline -e 'load \"{init_file}\"'",
+            f"{self.execpath} --no-readline -e '{self.init_cmd}'",
             r"i+\d+ :\s*$",
             None,
             continuation_prompt_regex=r"\.\.\. : $")
