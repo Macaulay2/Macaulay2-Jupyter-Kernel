@@ -124,7 +124,7 @@ class M2Kernel(ProcessMetaKernel):
             return HTMLWithTextFallback("".join(html))
 
         else:
-            return output
+            self.Write(repr(output))
 
     def get_completions(self, info):
         return [s for s in completion_symbols if s.startswith(info["obj"])]
