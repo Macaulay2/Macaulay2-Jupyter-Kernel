@@ -4,7 +4,7 @@ import sys
 import configparser
 import html2text
 import subprocess
-from metakernel.process_metakernel import ProcessMetaKernel, TextOutput
+from metakernel.process_metakernel import ProcessMetaKernel
 from metakernel.replwrap import REPLWrapper
 from IPython.display import HTML
 from .symbols import completion_symbols
