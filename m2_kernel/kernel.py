@@ -23,18 +23,16 @@ class M2Kernel(ProcessMetaKernel):
         "file_extension": ".m2",
     }
 
-    @property
-    def kernel_json(self):
-        return {
-            "argv": [
-                sys.executable,
-                "-m", "m2_kernel",
-                "-f", "{connection_file}"],
-            "display_name": "Macaulay2",
-            "name": "M2",
-            "mimetype": "text/x-macaulay2",
-            "file_extension": ".m2",
-        }
+    kernel_json = {
+        "argv": [
+            sys.executable,
+            "-m", "m2_kernel",
+            "-f", "{connection_file}"],
+        "display_name": "Macaulay2",
+        "name": "M2",
+        "mimetype": "text/x-macaulay2",
+        "file_extension": ".m2",
+    }
 
     def __init__(self, *args, **kwargs):
         ProcessMetaKernel.__init__(self, *args, **kwargs)
