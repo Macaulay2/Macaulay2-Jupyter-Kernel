@@ -1,4 +1,0 @@
-ipykernel
-jupyter_client
-notebook
-pexpect
