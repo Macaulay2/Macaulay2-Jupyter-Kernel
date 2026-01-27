@@ -1,3 +1,25 @@
+## [0.8.0]
+- Now uses [Metakernel](https://github.com/Calysto/metakernel), adding a wide variety
+  of new features.  For example, there are quite a few new
+  [magics](https://metakernel.readthedocs.io/en/latest/source/README.html).
+- Mode magics have a slightly different syntax, e.g., use `%mode texmacs` instead of
+  `--%mode=texmacs`.
+- The mode magics have been updated.  The only three options are `webapp` (the new
+  default), `texmacs`, and `standard`.
+- There is no more `timeout` magic.  Instead, the kernel may be interrupted at
+  any time by the client, e.g., by pressing the ■ button in Jupyter Lab.
+- The installation step is slightly different.  Use `python3 -m m2_kernel install`
+  (likely with the `--user` option) instead of `python3 -m m2_kernel.install`.
+- In `webapp` mode, links in `help`, `locate`, `code`, etc. output now point to
+  the Macaulay2 webpage.
+- The `9,0` keyboard shortcut for restarting the kernel and clearing has been
+  removed.  However, this operation is still available under the "Kernel" menu
+  in Jupyter Lab.
+- When `show` is used to show a local image (e.g., when using `displayGraph` in
+  the *Graphs* package), the image now appears in an output cell.
+- Simple unit tests have been added, using
+  [jupyter_kernel_test](https://github.com/jupyter/jupyter_kernel_test).
+
 ## [0.7.0]
 - Now maintained by the Macaulay2 organization.
 - Update to work with Notebook 7.
