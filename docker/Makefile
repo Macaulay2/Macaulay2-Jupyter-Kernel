@@ -1,3 +1,5 @@
+all:
+
 push: # build
 	docker tag testok rzlatev/m2jk
 	docker push rzlatev/m2jk
