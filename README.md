@@ -50,11 +50,11 @@ $ python3 -m m2_kernel install
 
 ## Docker
 
-A docker image packing `v0.6.7-beta` and Macaulay2 version `1.18` is available as `rzlatev/m2jk`.
+A docker image is available as `dtorrance/m2jk`.
 To run locally, you need to map port `8890`.
 
 ```bash
-$ docker run -p 8890:8890 rzlatev/m2jk &
+$ docker run -p 8890:8890 dtorrance/m2jk &
 ```
 
 ## Running the notebook

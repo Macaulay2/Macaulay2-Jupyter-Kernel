@@ -1,6 +1,8 @@
+all:
+
 push: # build
-	docker tag testok rzlatev/m2jk
-	docker push rzlatev/m2jk
+	docker tag testok dtorrance/m2jk
+	docker push dtorrance/m2jk
 
 run: # build
 	docker run -p 8890:8890 testok
