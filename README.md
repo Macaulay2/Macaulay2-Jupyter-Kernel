@@ -30,16 +30,12 @@ Alternatively, you can configure M2JK to use a specific binary.
 
 ## Installation
 
-<!--
-
 You can install the latest release version directly from PyPI by
 
 ```bash
 $ pip3 install macaulay2-jupyter-kernel
-$ python3 -m m2_kernel.install
+$ python3 -m m2_kernel install
 ```
-
--->
 
 You can install the latest development version from source by
 
