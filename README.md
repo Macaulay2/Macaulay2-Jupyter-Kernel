@@ -72,6 +72,19 @@ This isn't a problem when using the default display mode.
 On the other hand, client-side syntax highlighting, such as in the screenshots,
 is missing entirely. -->
 
+## LSP Support
+
+[JupyterLab LSP](https://github.com/jupyter-lsp/jupyterlab-lsp) support is
+available for Macaulay2 via the `M2-language-server` binary bundled with
+Macaulay2. To enable it:
+
+```bash
+pip install jupyterlab-lsp
+```
+
+The kernel package already includes the spec that registers `M2-language-server` with
+`jupyter-lsp` automatically.  No additional configuration is required.
+
 ## License
 
 This software is not part of Macaulay2 and is released under the MIT License.
