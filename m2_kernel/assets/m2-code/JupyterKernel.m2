@@ -103,3 +103,15 @@ show URL := url -> (
 	mimetype := first lines get(mimetypecmd | file);
 	if match("^image", mimetype) then print IMG("src" => file)
 	else windowOpen("/files/" | file)))
+
+-- create symlinks for LSP
+lspSymlink = ".lsp_symlink"
+createSymlink = dir -> (
+    dir = replace("/*$", "", dir); -- remove trailing slashes
+    if not fileExists(lspSymlink | dir)
+    then (
+	m := regex("^(.*)/[^/]+$", dir); -- parent directory
+	makeDirectory(lspSymlink | substring(m#1, dir));
+	symlinkFile(dir, lspSymlink | dir)))
+
+createSymlink(prefixDirectory | currentLayout#"packages")

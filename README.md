@@ -82,8 +82,22 @@ Macaulay2. To enable it:
 pip install jupyterlab-lsp
 ```
 
-The kernel package already includes the spec that registers `M2-language-server` with
-`jupyter-lsp` automatically.  No additional configuration is required.
+The kernel package includes the spec that registers `M2-language-server` with
+`jupyter-lsp` automatically.  It will also symlink the Macaulay2 source directory
+so that the "Jump to definition" feature will work, provided that you start
+JupyterLab with the following option:
+
+```bash
+jupyter lab --ContentsManager.allow_hidden=True
+```
+
+Or, to save this setting for future sessions, add the following to
+`~/.jupyter/jupyter_server_config` (after running
+`jupyter server --generate-config` if it doesn't exist):
+
+```python
+c.ContentsManager.allow_hidden=True
+```
 
 ## License
 
