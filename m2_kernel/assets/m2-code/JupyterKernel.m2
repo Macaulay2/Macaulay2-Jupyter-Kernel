@@ -25,10 +25,58 @@ ZZ#{Jupyter, InputContinuationPrompt} = x -> "... : "
 getMethod = symb -> x -> (lookup({jupyterMode, symb}, class x) ?? identity) x
 Thing#{Jupyter, BeforePrint}  = getMethod BeforePrint
 Thing#{Jupyter, NoPrint}      = getMethod NoPrint
-Thing#{Jupyter, Print}        = getMethod Print
-Thing#{Jupyter, AfterPrint}   = getMethod AfterPrint
-Thing#{Jupyter, AfterNoPrint} = getMethod AfterNoPrint
-Thing#{Jupyter, print}        = getMethod print
+
+-- Control characters for native text output (sent alongside HTML for text/plain MIME)
+jupyterTextTag    = "\x1f" -- opens native text region
+jupyterTextEndTag = "\x16" -- closes native text region
+
+emitText = n -> << jupyterTextTag << concatenate between(newline, unstack n) << jupyterTextEndTag;
+
+emitTextValue = x -> (
+    if jupyterMode === Standard then return;
+    oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
+    save := printWidth;
+    if printWidth != 0 then printWidth = printWidth - #oprompt;
+    n := net x;
+    printWidth = save;
+    -- Net | Net horizontally joins with proper row alignment, then flatten to string
+    emitText((net oprompt) | n);
+    )
+
+emitTextAfter = (sym, x) -> (
+    if jupyterMode === Standard then return;
+    l := lookup(sym, class x);
+    if l === null then return;
+    s := l x;
+    if s === null then return;
+    oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " : ");
+    parts := select(toList deepSplice sequence s, p -> p =!= null);
+    if #parts === 0 then return;
+    n := horizontalJoin apply(parts, net);
+    emitText((net oprompt) | n);
+    )
+
+Thing#{Jupyter, Print} = x -> (
+    (getMethod Print) x;
+    emitTextValue x;
+    )
+Nothing#{Jupyter, Print} = identity
+
+Thing#{Jupyter, AfterPrint} = x -> (
+    (getMethod AfterPrint) x;
+    emitTextAfter(AfterPrint, x);
+    )
+Thing#{Jupyter, AfterNoPrint} = x -> (
+    (getMethod AfterNoPrint) x;
+    emitTextAfter(AfterNoPrint, x);
+    )
+Thing#{Jupyter, print} = x -> (
+    if (f := lookup({jupyterMode, print}, class x)) =!= null
+    then (
+        f x;
+        emitText net x)
+    else << net x << endl;
+    )
 
 changeJupyterMode = mode -> (
     jupyterMode = mode;
