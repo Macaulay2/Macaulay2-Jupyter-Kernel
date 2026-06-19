@@ -2,19 +2,22 @@ import os
 import re
 import sys
 import configparser
-import html2text
 import subprocess
 from metakernel.process_metakernel import ProcessMetaKernel
 from metakernel.replwrap import REPLWrapper
-from IPython.display import HTML
 from .symbols import completion_symbols
 from .mode_magic import ModeMagic
 from ._version import __version__
 
-class HTMLWithTextFallback(HTML):
-    "Provide text fallback for html output outside of web browsers."
+class M2Display:
+    "Rich display object carrying independent HTML and native-text representations."
+    def __init__(self, html, text):
+        self._html = html
+        self._text = text
+    def _repr_html_(self):
+        return self._html
     def __repr__(self):
-        return html2text.html2text(self._repr_html_())
+        return self._text
 
 class M2Kernel(ProcessMetaKernel):
     implementation = "macaulay2_jupyter_kernel"
@@ -80,12 +83,19 @@ class M2Kernel(ProcessMetaKernel):
 
     webapp_regex = re.compile(
         r"""
-        \x0e([^\x12]*)\x12([^\x11]*)\x11([^\x12]*)\x12 # with prompt
-        | \x11([^\x12]*)\x12                           # without prompt
+        \x0e([^\x12]*)\x12([^\x11]*)\x11([^\x12]*)\x12 # rich: with prompt
+        | \x11([^\x12]*)\x12                           # rich: without prompt
+        | \x1f(.*?)\x16                                # native text region
         """,
         re.DOTALL | re.VERBOSE
     )
-    texmacs_regex = re.compile(r"\x02html:([^\x05]*)\x05", re.DOTALL)
+    texmacs_regex = re.compile(
+        r"""
+        \x02html:([^\x05]*)\x05   # rich html region
+        | \x1f(.*?)\x16           # native text region
+        """,
+        re.DOTALL | re.VERBOSE
+    )
 
     def do_execute_direct(self, code, silent=False):
         # run parent do_execute_direct silently so we can modify the output
@@ -94,40 +104,52 @@ class M2Kernel(ProcessMetaKernel):
         if self.mode == "webapp":
             output = repr(output)
             html = []
+            text = []
             pos = 0
 
             for m in self.webapp_regex.finditer(output):
-                pre = output[pos:m.start()].strip()
-                if pre:
-                    html.append(f"<pre>{pre}</pre>\n")
-                p = re.sub(r"[\x0e\x11\x12]", "",  m.group(0))
-                html.append(f"<p>{p}</p>\n")
+                gap = output[pos:m.start()].strip()
+                if gap:
+                    html.append(f"<pre>{gap}</pre>\n")
+                    text.append(gap)
+                if m.group(5) is not None:          # native text region
+                    text.append(m.group(5))
+                else:                                # rich HTML region
+                    p = re.sub(r"[\x0e\x11\x12]", "", m.group(0))
+                    html.append(f"<p>{p}</p>\n")
                 pos = m.end()
 
-            pre = output[pos:].strip()
-            if pre:
-                html.append(f"<pre>{pre}</pre>\n")
+            gap = output[pos:].strip()
+            if gap:
+                html.append(f"<pre>{gap}</pre>\n")
+                text.append(gap)
 
-            return HTMLWithTextFallback("".join(html))
+            return M2Display("".join(html), "\n\n".join(text))
 
         elif self.mode == "texmacs":
             output = repr(output)
             html = []
+            text = []
             pos = 0
 
             for m in self.texmacs_regex.finditer(output):
-                pre = output[pos:m.start()].strip()
-                if pre:
-                    html.append(f"<pre>{pre}</pre>\n")
-                p = re.sub(r"\x02html:|\x05", "", m.group(0))
-                html.append(f"<p>{p}</p>\n")
+                gap = output[pos:m.start()].strip()
+                if gap:
+                    html.append(f"<pre>{gap}</pre>\n")
+                    text.append(gap)
+                if m.group(2) is not None:          # native text region
+                    text.append(m.group(2))
+                else:                                # rich HTML region
+                    p = re.sub(r"\x02html:|\x05", "", m.group(0))
+                    html.append(f"<p>{p}</p>\n")
                 pos = m.end()
 
-            pre = output[pos:].strip()
-            if pre:
-                html.append(f"<pre>{pre}</pre>\n")
+            gap = output[pos:].strip()
+            if gap:
+                html.append(f"<pre>{gap}</pre>\n")
+                text.append(gap)
 
-            return HTMLWithTextFallback("".join(html))
+            return M2Display("".join(html), "\n\n".join(text))
 
         else:
             self.Write(repr(output))
