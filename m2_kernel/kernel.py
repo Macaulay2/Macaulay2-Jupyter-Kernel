@@ -45,6 +45,15 @@ class M2Kernel(ProcessMetaKernel):
         "name": "M2",
     }
 
+    @property
+    def help_links(self):
+        return super().help_links + [
+            {
+                "text": "Macaulay2 Documentation",
+                "url": "https://macaulay2.com/doc/Macaulay2/share/doc/Macaulay2/Macaulay2Doc/html/",
+            },
+        ]
+
     def __init__(self, *args, **kwargs):
         ProcessMetaKernel.__init__(self, *args, **kwargs)
         self.execpath = "M2"
