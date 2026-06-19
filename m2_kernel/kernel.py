@@ -41,6 +41,7 @@ class M2Kernel(ProcessMetaKernel):
             "-m", "m2_kernel",
             "-f", "{connection_file}"],
         "display_name": "Macaulay2",
+        "language": "Macaulay2",
         "name": "M2",
     }
 
