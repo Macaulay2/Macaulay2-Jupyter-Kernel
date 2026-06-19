@@ -1,3 +1,8 @@
+## [0.8.1]
+
+- Release date: 2026-06-19
+- Add missing `language` field to `kernel.json`.
+
 ## [0.8.0]
 - Now uses [Metakernel](https://github.com/Calysto/metakernel), adding a wide variety
   of new features.  For example, there are quite a few new
