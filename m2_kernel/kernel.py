@@ -19,6 +19,13 @@ class M2Display:
     def __repr__(self):
         return self._text
 
+class M2Text:
+    "Plain text display for standard mode output."
+    def __init__(self, text):
+        self._text = text
+    def __repr__(self):
+        return self._text
+
 class M2Kernel(ProcessMetaKernel):
     implementation = "macaulay2_jupyter_kernel"
     implementation_version = __version__
@@ -151,8 +158,47 @@ class M2Kernel(ProcessMetaKernel):
 
             return M2Display("".join(html), "\n\n".join(text))
 
-        else:
-            self.Write(repr(output))
+        else:  # standard mode
+            output = repr(output).strip()
+            if not output:
+                return None
+            items = []
+            for block in re.split(r'(?=^o\d+\s+[=:])', output, flags=re.MULTILINE):
+                block = block.strip()
+                if not block:
+                    continue
+                m = re.search(r'^(o\d+)\s+[=:]', block, re.MULTILINE)
+                if m:
+                    items.append(('prompted', block, m.group(1)))
+                else:
+                    items.append(('gap', block, None))
+            # Merge consecutive prompted items with the same prompt number
+            merged = []
+            for kind, content, prompt in items:
+                if (kind == 'prompted' and merged
+                        and merged[-1][0] == 'prompted'
+                        and merged[-1][2] == prompt):
+                    merged[-1][1] += '\n\n' + content
+                else:
+                    merged.append([kind, content, prompt])
+            last_prompted_i = next(
+                (i for i in range(len(merged) - 1, -1, -1)
+                 if merged[i][0] == 'prompted'),
+                None)
+            result = None
+            for i, (kind, content, prompt) in enumerate(merged):
+                if kind == 'gap':
+                    self.Write(content)
+                elif kind == 'prompted':
+                    if i == last_prompted_i:
+                        result = M2Text(content)
+                    else:
+                        self.send_response(self.iopub_socket, 'display_data', {
+                            'data': {'text/plain': content + '\n\n'},
+                            'metadata': {},
+                            'transient': {}
+                        })
+            return result
 
     def get_completions(self, info):
         return [s for s in completion_symbols if s.startswith(info["obj"])]

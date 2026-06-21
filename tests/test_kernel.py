@@ -6,7 +6,7 @@ class M2KernelTests(jkt.KernelTests):
     kernel_name = "m2"
     language_name = "Macaulay2"
     file_extension = ".m2"
-    code_hello_world = "\"hello, world\""
+    code_hello_world = 'print "hello, world"'
 
     def setUp(self):
         self.flush_channels()
