@@ -1,3 +1,13 @@
+## [0.8.2]
+
+- Release date: 2026-06-22
+- Add link to M2 documentation in help menu.
+- Emit native M2 text alongside HTML in `text/plain` output, removing the
+  `html2text` dependency.
+- Send intermediate output values as `display_data` and the final output value
+  as `execute_result` in all modes.
+- Enable four previously-skipped `jupyter_kernel_test` tests.
+
 ## [0.8.1]
 
 - Release date: 2026-06-19
