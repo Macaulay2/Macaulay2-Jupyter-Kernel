@@ -29,5 +29,8 @@ Homepage = "https://github.com/Macaulay2/Macaulay2-Jupyter-Kernel"
 [project.optional-dependencies]
 test = ["jupyter-kernel-test"]
 
+[project.entry-points."jupyter_lsp_spec_v1"]
+macaulay2 = "m2_kernel.lsp_spec:load"
+
 [tool.setuptools]
 packages = ["m2_kernel"]
